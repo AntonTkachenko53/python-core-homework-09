@@ -1,10 +1,25 @@
 phone_book = {}
 
 
+def input_error(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except KeyError:
+            return 'No phone for this contact, try again'
+        except ValueError:
+            return 'Enter correct command'
+        except IndexError:
+            return 'Enter correct username or phone'
+    return inner
+
+
+@input_error
 def hello(*args):
     return 'How can I help you?'
 
 
+@input_error
 def close():
     return "Good bye!"
 
@@ -16,6 +31,7 @@ def show_all(*args):
     return result.rstrip()
 
 
+@input_error
 def add_or_change_phone(strip):
     words = strip.split(' ')
     if len(words) > 3:
@@ -24,6 +40,7 @@ def add_or_change_phone(strip):
     return 'Phone saved'
 
 
+@input_error
 def get_phone(strip):
     words = strip.split(' ')
     result = phone_book.get(words[1], 1)
@@ -33,22 +50,6 @@ def get_phone(strip):
         raise ValueError
     else:
         return f"Contact's phone is {result}"
-
-
-def input_error(func):
-    def inner(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except KeyError:
-            print('No phone for this contact, try again')
-            inner(*args, **kwargs)
-        except ValueError:
-            print('Enter correct command')
-            inner(*args, **kwargs)
-        except IndexError:
-            print('Enter correct username or phone')
-            inner(*args, **kwargs)
-    return inner
 
 
 commands = {'hello': hello,
@@ -80,4 +81,5 @@ def main():
             print(output)
 
 
-main()
+if __name__ == '__main__':
+    main()
